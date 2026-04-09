@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片颜色可视化分析工具</title>
-    <script src="echarts.min.js"></script>
+    <title>图片颜色可视化分析工具 - 版本选择</title>
     <style>
         * {
             margin: 0;
@@ -14,1316 +13,143 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
         
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 600px;
+            width: 90%;
         }
         
         h1 {
-            color: #2c3e50;
             font-size: 2.5rem;
-            margin-bottom: 10px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
         
-        .subtitle {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-        }
-        
-        .main-content {
-            display: grid;
-            grid-template-columns: 300px 1fr;
+        .version-container {
+            display: flex;
+            flex-direction: column;
             gap: 20px;
-            margin-bottom: 30px;
+            margin: 30px 0;
         }
         
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .control-panel {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .control-group {
-            margin-bottom: 20px;
-        }
-        
-        .control-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        
-        .upload-area {
-            border: 2px dashed #ddd;
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
+        .version-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
             transition: all 0.3s ease;
-            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .upload-area:hover {
-            border-color: #3498db;
-            background-color: #f0f8ff;
+        .version-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
         
-        .upload-area.dragover {
-            border-color: #27ae60;
-            background-color: #f0fff0;
-        }
-        
-        .upload-area input[type="file"] {
-            display: none;
-        }
-        
-        .upload-text {
-            color: #7f8c8d;
-        }
-        
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        input[type="range"] {
-            flex: 1;
-            -webkit-appearance: none;
-            height: 6px;
-            background: #ddd;
-            border-radius: 3px;
-            outline: none;
-        }
-        
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            background: #3498db;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        
-        input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            background: #3498db;
-            border-radius: 50%;
-            cursor: pointer;
-            border: none;
-        }
-        
-        .k-value {
-            min-width: 50px;
-            text-align: center;
-            font-weight: 600;
-        }
-        
-        .radio-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 8px;
-        }
-        
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            font-weight: normal;
-        }
-        
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        .chart-container {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            min-height: 500px;
-        }
-        
-        #mainChart {
-            width: 100%;
-            height: 400px;
-        }
-        
-        #scatterChart {
-            width: 100%;
-            height: 300px;
-            margin-top: 20px;
-        }
-        
-        .ai-result {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .ai-result h3 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        
-        .score {
+        .version-card h2 {
             font-size: 1.5rem;
-            font-weight: bold;
-            color: #e67e22;
             margin-bottom: 10px;
+            color: #fff;
         }
         
-        .comment {
-            color: #555;
+        .version-card p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
             line-height: 1.5;
         }
         
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            background-color: rgba(255,255,255,0.8);
-            border-radius: 8px;
-            margin: 10px 0;
-        }
-        
-        .loading.show {
-            display: block;
-        }
-        
-        .spinner {
+        .btn {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 10px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .history {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .history h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-        
-        .history-items {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-        }
-        
-        .history-item {
-            min-width: 120px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-        
-        .history-item:hover {
-            border-color: #3498db;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .history-item img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        
-        .history-item .info {
-            font-size: 12px;
-            color: #7f8c8d;
-        }
-        
-        .export-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #3498db;
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
             color: white;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
+            border-radius: 50px;
+            font-size: 16px;
             font-weight: 600;
-            transition: background-color 0.3s ease;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
         }
         
-        .export-btn:hover {
-            background-color: #2980b9;
+        .btn:hover {
+            background: linear-gradient(45deg, #2980b9, #1f618d);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
         }
         
-        footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-top: 30px;
+        .btn-alt {
+            background: linear-gradient(45deg, #9b59b6, #8e44ad);
         }
         
-        .deploy-guide {
-            margin-bottom: 15px;
-            color: #7f8c8d;
+        .btn-alt:hover {
+            background: linear-gradient(45deg, #8e44ad, #7d3c98);
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
+        }
+        
+        .footer {
+            margin-top: 40px;
+            color: rgba(255, 255, 255, 0.6);
             font-size: 14px;
         }
         
-        .author {
-            color: #95a5a6;
-            font-size: 12px;
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 30px;
+            }
+            
+            .version-card {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>图片颜色可视化分析工具</h1>
-            <p class="subtitle">上传图片，分析颜色分布，评估颜色和谐度</p>
-        </header>
+        <h1>图片颜色可视化分析工具</h1>
+        <p>选择你喜欢的版本</p>
         
-        <div class="main-content">
-            <div class="control-panel">
-                <div class="control-group">
-                    <label>上传图片</label>
-                    <div class="upload-area" id="uploadArea">
-                        <input type="file" id="fileInput" accept="image/*">
-                        <div class="upload-text">
-                            <p>点击或拖拽图片到此处上传</p>
-                            <p>支持 JPG、PNG、WebP 格式</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <label>聚类数量 K</label>
-                    <div class="slider-container">
-                        <input type="range" id="kSlider" min="2" max="10" value="5" step="1">
-                        <span class="k-value" id="kValue">5</span>
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <label>颜色空间</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="colorSpace" value="rgb" checked>
-                            RGB
-                        </label>
-                        <label>
-                            <input type="radio" name="colorSpace" value="lab">
-                            LAB
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <label>图表类型</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="chartType" value="pie" checked>
-                            饼图
-                        </label>
-                        <label>
-                            <input type="radio" name="chartType" value="bar">
-                            柱状图
-                        </label>
-                        <label>
-                            <input type="radio" name="chartType" value="heatmap">
-                            热力图
-                        </label>
-                        <label>
-                            <input type="radio" name="chartType" value="radar">
-                            雷达图
-                        </label>
-
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <label>API Key (可选)</label>
-                    <input type="text" id="apiKey" placeholder="输入 CloseAI API Key，不填则使用模拟评估">
-                </div>
-                
-                <div class="control-group">
-                    <button class="export-btn" id="exportBtn">导出结果</button>
-                </div>
+        <div class="version-container">
+            <div class="version-card">
+                <h2>版本 2.0</h2>
+                <p>✨ 星空背景装饰<br>
+                🎨 玻璃态设计<br>
+                🌟 流星动画效果<br>
+                💎 现代化界面</p>
+                <a href="index_v2.0.html" class="btn">使用版本 2.0</a>
             </div>
             
-            <div class="chart-container">
-                <div class="loading" id="loading">
-                    <span class="spinner"></span>
-                    <span>正在分析图片...</span>
-                </div>
-                <div id="mainChart"></div>
-                <div id="scatterChart"></div>
+            <div class="version-card">
+                <h2>版本 1.0</h2>
+                <p>⚡ 简洁界面<br>
+                🚀 更快的加载速度<br>
+                📱 轻量化设计<br>
+                💯 核心功能完整</p>
+                <a href="index_v1.0.html" class="btn btn-alt">使用版本 1.0</a>
             </div>
         </div>
         
-        <div class="ai-result" id="aiResult">
-            <h3>颜色和谐度评估</h3>
-            <div class="score" id="harmonyScore">请上传图片进行分析</div>
-            <div class="comment" id="harmonyComment"></div>
+        <div class="footer">
+            <p>作者：Ya_Bo | <a href="https://github.com/ilovedianaforever" target="_blank" style="color: rgba(255,255,255,0.8); text-decoration: none;">GitHub</a></p>
         </div>
-        
-        <div class="history" id="history">
-            <h3>历史记录</h3>
-            <div class="history-items" id="historyItems">
-                <!-- 历史记录将通过 JavaScript 动态添加 -->
-            </div>
-        </div>
-        
-        <footer>
-            <div class="author">
-                作者：Ya_Bo | 2026-04-04
-            </div>
-            <div class="github">
-                GitHub: <a href="https://github.com/ilovedianaforever" target="_blank">Ya_Bo</a>
-            </div>
-        </footer>
     </div>
-    
-    <script>
-        // 全局变量
-        let mainChart = null;
-        let scatterChart = null;
-        let currentImage = null;
-        let currentPixels = [];
-        let currentClusters = [];
-        let currentK = 5;
-        let currentColorSpace = 'rgb';
-        let currentChartType = 'pie';
-        let history = [];
-        
-        // DOM 元素
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const kSlider = document.getElementById('kSlider');
-        const kValue = document.getElementById('kValue');
-        const apiKeyInput = document.getElementById('apiKey');
-        const loading = document.getElementById('loading');
-        const harmonyScore = document.getElementById('harmonyScore');
-        const harmonyComment = document.getElementById('harmonyComment');
-        const exportBtn = document.getElementById('exportBtn');
-        const historyItems = document.getElementById('historyItems');
-        
-        // 初始化图表
-        function initCharts() {
-            mainChart = echarts.init(document.getElementById('mainChart'));
-            scatterChart = echarts.init(document.getElementById('scatterChart'));
-        }
-        
-        // 图片上传功能
-        function initUpload() {
-            // 点击上传
-            uploadArea.addEventListener('click', () => {
-                fileInput.click();
-            });
-            
-            // 拖拽上传
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('dragover');
-            });
-            
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('dragover');
-            });
-            
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('dragover');
-                if (e.dataTransfer.files.length > 0) {
-                    handleFile(e.dataTransfer.files[0]);
-                }
-            });
-            
-            // 文件选择
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    handleFile(e.target.files[0]);
-                }
-            });
-        }
-        
-        // 处理上传的文件
-        function handleFile(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    currentImage = img;
-                    extractPixels();
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        // RGB到LAB颜色空间转换
-        function rgbToLab(r, g, b) {
-            // RGB到XYZ
-            r /= 255;
-            g /= 255;
-            b /= 255;
-            
-            r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
-            g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
-            b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
-            
-            r *= 100;
-            g *= 100;
-            b *= 100;
-            
-            const x = r * 0.4124 + g * 0.3576 + b * 0.1805;
-            const y = r * 0.2126 + g * 0.7152 + b * 0.0722;
-            const z = r * 0.0193 + g * 0.1192 + b * 0.9505;
-            
-            // XYZ到LAB
-            const xRef = 95.047;
-            const yRef = 100.000;
-            const zRef = 108.883;
-            
-            let xRatio = x / xRef;
-            let yRatio = y / yRef;
-            let zRatio = z / zRef;
-            
-            xRatio = xRatio > 0.008856 ? Math.pow(xRatio, 1/3) : (7.787 * xRatio) + (16/116);
-            yRatio = yRatio > 0.008856 ? Math.pow(yRatio, 1/3) : (7.787 * yRatio) + (16/116);
-            zRatio = zRatio > 0.008856 ? Math.pow(zRatio, 1/3) : (7.787 * zRatio) + (16/116);
-            
-            const L = (116 * yRatio) - 16;
-            const a = 500 * (xRatio - yRatio);
-            const labB = 200 * (yRatio - zRatio);
-            
-            return [L, a, labB];
-        }
-        
-        // 计算两个点之间的欧氏距离
-        function calculateDistance(p1, p2) {
-            let sum = 0;
-            for (let i = 0; i < p1.length; i++) {
-                sum += Math.pow(p1[i] - p2[i], 2);
-            }
-            return Math.sqrt(sum);
-        }
-        
-        // K-Means聚类算法
-        function kmeans(pixels, k, colorSpace) {
-            // 转换颜色空间
-            const transformedPixels = pixels.map(pixel => {
-                if (colorSpace === 'lab') {
-                    return rgbToLab(pixel[0], pixel[1], pixel[2]);
-                }
-                return pixel;
-            });
-            
-            // 随机初始化中心点（从样本中选择）
-            let centroids = [];
-            const usedIndices = new Set();
-            for (let i = 0; i < k; i++) {
-                let index;
-                do {
-                    index = Math.floor(Math.random() * transformedPixels.length);
-                } while (usedIndices.has(index));
-                usedIndices.add(index);
-                centroids.push([...transformedPixels[index]]);
-            }
-            
-            let clusters = new Array(k).fill(0).map(() => []);
-            let maxIterations = 50;
-            let convergenceThreshold = 1e-4;
-            let iteration = 0;
-            
-            while (iteration < maxIterations) {
-                // 分配像素到最近的中心点
-                clusters = new Array(k).fill(0).map(() => []);
-                for (let i = 0; i < transformedPixels.length; i++) {
-                    let minDistance = Infinity;
-                    let closestCentroid = 0;
-                    
-                    for (let j = 0; j < k; j++) {
-                        const distance = calculateDistance(transformedPixels[i], centroids[j]);
-                        if (distance < minDistance) {
-                            minDistance = distance;
-                            closestCentroid = j;
-                        }
-                    }
-                    
-                    clusters[closestCentroid].push(i);
-                }
-                
-                // 计算新的中心点
-                let newCentroids = [];
-                let hasEmptyCluster = false;
-                
-                for (let i = 0; i < k; i++) {
-                    if (clusters[i].length === 0) {
-                        // 处理空聚类，重新随机选择中心点
-                        let index;
-                        do {
-                            index = Math.floor(Math.random() * transformedPixels.length);
-                        } while (usedIndices.has(index));
-                        usedIndices.add(index);
-                        newCentroids.push([...transformedPixels[index]]);
-                        hasEmptyCluster = true;
-                    } else {
-                        // 计算平均值
-                        const centroid = [0, 0, 0];
-                        for (const index of clusters[i]) {
-                            for (let j = 0; j < 3; j++) {
-                                centroid[j] += transformedPixels[index][j];
-                            }
-                        }
-                        for (let j = 0; j < 3; j++) {
-                            centroid[j] /= clusters[i].length;
-                        }
-                        newCentroids.push(centroid);
-                    }
-                }
-                
-                // 检查收敛
-                let maxChange = 0;
-                for (let i = 0; i < k; i++) {
-                    const change = calculateDistance(centroids[i], newCentroids[i]);
-                    if (change > maxChange) {
-                        maxChange = change;
-                    }
-                }
-                
-                centroids = newCentroids;
-                iteration++;
-                
-                if (!hasEmptyCluster && maxChange < convergenceThreshold) {
-                    break;
-                }
-            }
-            
-            // 转换回RGB颜色空间（如果使用的是LAB）
-            const result = [];
-            for (let i = 0; i < k; i++) {
-                let color;
-                if (colorSpace === 'lab') {
-                    // 简化处理，直接使用原始像素的平均值
-                    const rgbSum = [0, 0, 0];
-                    for (const index of clusters[i]) {
-                        for (let j = 0; j < 3; j++) {
-                            rgbSum[j] += pixels[index][j];
-                        }
-                    }
-                    color = rgbSum.map(val => Math.round(val / clusters[i].length));
-                } else {
-                    color = centroids[i].map(val => Math.round(val));
-                }
-                
-                result.push({
-                    color: color,
-                    count: clusters[i].length,
-                    percentage: (clusters[i].length / pixels.length) * 100
-                });
-            }
-            
-            // 按像素数量排序
-            result.sort((a, b) => b.count - a.count);
-            return result;
-        }
-        
-        // RGB转十六进制颜色
-        function rgbToHex(r, g, b) {
-            return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
-        }
-        
-        // 获取颜色名称
-        function getColorName(r, g, b) {
-            // 简单的颜色名称映射
-            const colorNames = [
-                { name: '红色', r: 255, g: 0, b: 0 },
-                { name: '绿色', r: 0, g: 255, b: 0 },
-                { name: '蓝色', r: 0, g: 0, b: 255 },
-                { name: '黄色', r: 255, g: 255, b: 0 },
-                { name: '青色', r: 0, g: 255, b: 255 },
-                { name: '洋红色', r: 255, g: 0, b: 255 },
-                { name: '黑色', r: 0, g: 0, b: 0 },
-                { name: '白色', r: 255, g: 255, b: 255 },
-                { name: '灰色', r: 128, g: 128, b: 128 },
-                { name: '橙色', r: 255, g: 165, b: 0 },
-                { name: '紫色', r: 128, g: 0, b: 128 },
-                { name: '棕色', r: 165, g: 42, b: 42 },
-                { name: '粉色', r: 255, g: 192, b: 203 },
-                { name: '金色', r: 255, g: 215, b: 0 },
-                { name: '银色', r: 192, g: 192, b: 192 }
-            ];
-            
-            let minDistance = Infinity;
-            let closestColor = '未知';
-            
-            for (const color of colorNames) {
-                const distance = calculateDistance([r, g, b], [color.r, color.g, color.b]);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestColor = color.name;
-                }
-            }
-            
-            return closestColor;
-        }
-        
-        // 更新图表
-        function updateCharts() {
-            if (currentClusters.length === 0) return;
-            
-            currentChartType = document.querySelector('input[name="chartType"]:checked').value;
-            
-            // 准备数据
-            const data = currentClusters.map((cluster, index) => {
-                const hexColor = rgbToHex(cluster.color[0], cluster.color[1], cluster.color[2]);
-                const colorName = getColorName(cluster.color[0], cluster.color[1], cluster.color[2]);
-                return {
-                    value: cluster.count,
-                    name: `${colorName} (${hexColor})`,
-                    itemStyle: {
-                        color: hexColor
-                    },
-                    tooltip: {
-                        formatter: `${hexColor}<br/>${colorName}<br/>像素数: ${cluster.count}<br/>占比: ${cluster.percentage.toFixed(2)}%`
-                    }
-                };
-            });
-            
-            // 清除之前的图表配置，确保完全重新渲染
-            mainChart.clear();
-            
-            // 更新主图表
-            if (currentChartType === 'pie') {
-                mainChart.setOption({
-                    title: {
-                        text: '颜色分布饼图',
-                        left: 'center'
-                    },
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: '{b}: {c} ({d}%)'
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        left: 'left',
-                        data: data.map(item => item.name)
-                    },
-                    series: [{
-                        name: '像素数量',
-                        type: 'pie',
-                        radius: '50%',
-                        center: ['50%', '60%'],
-                        data: data,
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }]
-                });
-            } else if (currentChartType === 'bar') {
-                mainChart.setOption({
-                    title: {
-                        text: '颜色分布柱状图',
-                        left: 'center'
-                    },
-                    tooltip: {
-                        trigger: 'axis',
-                        axisPointer: {
-                            type: 'shadow'
-                        }
-                    },
-                    legend: {
-                        data: ['像素数量'],
-                        top: 30
-                    },
-                    grid: {
-                        left: '3%',
-                        right: '4%',
-                        bottom: '3%',
-                        containLabel: true
-                    },
-                    xAxis: {
-                        type: 'category',
-                        data: data.map(item => item.name)
-                    },
-                    yAxis: {
-                        type: 'value',
-                        name: '像素数量'
-                    },
-                    series: [{
-                        name: '像素数量',
-                        type: 'bar',
-                        data: data.map(item => ({
-                            value: item.value,
-                            itemStyle: {
-                                color: item.itemStyle.color
-                            }
-                        }))
-                    }]
-                });
-            } else if (currentChartType === 'heatmap') {
-                // 准备热力图数据 - 使用更多数据点来创建更密集的热力图
-                const heatmapData = [];
-                
-                // 为每个聚类创建多个数据点，根据像素数量加权
-                currentClusters.forEach((cluster, index) => {
-                    const [r, g, b] = cluster.color;
-                    const count = cluster.count;
-                    
-                    // 根据像素数量创建多个点，使热力图更明显
-                    const pointCount = Math.min(Math.max(5, Math.floor(count / 1000)), 20);
-                    
-                    for (let i = 0; i < pointCount; i++) {
-                        // 添加一些随机变化，使热力图更自然
-                        const rVariation = Math.floor(Math.random() * 20) - 10;
-                        const gVariation = Math.floor(Math.random() * 20) - 10;
-                        const adjustedR = Math.max(0, Math.min(255, r + rVariation));
-                        const adjustedG = Math.max(0, Math.min(255, g + gVariation));
-                        
-                        heatmapData.push([adjustedR, adjustedG, count]);
-                    }
-                });
-                
-                mainChart.setOption({
-                    title: {
-                        text: '颜色热力图',
-                        left: 'center'
-                    },
-                    tooltip: {
-                        position: 'top',
-                        formatter: function(params) {
-                            const data = params.value;
-                            const hexColor = rgbToHex(data[0], data[1], 128); // 固定B值为128作为参考
-                            return `${hexColor}<br/>R: ${data[0]}<br/>G: ${data[1]}<br/>像素数: ${data[2]}`;
-                        }
-                    },
-                    grid: {
-                        height: '60%',
-                        top: '10%'
-                    },
-                    xAxis: {
-                        type: 'value',
-                        name: 'R',
-                        min: 0,
-                        max: 255,
-                        interval: 50
-                    },
-                    yAxis: {
-                        type: 'value',
-                        name: 'G',
-                        min: 0,
-                        max: 255,
-                        interval: 50
-                    },
-                    visualMap: {
-                        min: 0,
-                        max: Math.max(...currentClusters.map(c => c.count)),
-                        calculable: true,
-                        orient: 'horizontal',
-                        left: 'center',
-                        bottom: '5%',
-                        inRange: {
-                            color: ['#ffffff', '#ffcccc', '#ff9999', '#ff6666', '#ff3333', '#ff0000']
-                        },
-                        text: ['高', '低'],
-                        dimension: 2
-                    },
-                    series: [{
-                        name: '像素数量',
-                        type: 'heatmap',
-                        data: heatmapData,
-                        label: {
-                            show: false
-                        },
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 15,
-                                shadowColor: 'rgba(0, 0, 0, 0.8)'
-                            }
-                        },
-                        progressive: 1000,
-                        animation: false
-                    }]
-                });
-            } else if (currentChartType === 'radar') {
-                // 准备雷达图数据
-                const radarData = currentClusters.map((cluster, index) => {
-                    const [r, g, b] = cluster.color;
-                    return {
-                        value: [r, g, b],
-                        name: data[index].name,
-                        itemStyle: {
-                            color: data[index].itemStyle.color
-                        }
-                    };
-                });
-                
-                mainChart.setOption({
-                    title: {
-                        text: '颜色RGB雷达图',
-                        left: 'center'
-                    },
-                    tooltip: {},
-                    legend: {
-                        data: data.map(item => item.name),
-                        orient: 'vertical',
-                        left: 'left'
-                    },
-                    radar: {
-                        indicator: [
-                            { name: 'R', max: 255 },
-                            { name: 'G', max: 255 },
-                            { name: 'B', max: 255 }
-                        ]
-                    },
-                    series: [{
-                        name: '颜色RGB值',
-                        type: 'radar',
-                        data: radarData
-                    }]
-                });
-            }
-            
-            // 更新散点图
-            updateScatterChart();
-        }
-        
-        // 存储采样点，避免每次切换图表类型时重新随机采样
-        let cachedSampledPixels = null;
-        
-        // 更新散点图
-        function updateScatterChart() {
-            if (currentPixels.length === 0) return;
-            
-            // 只有在第一次或像素数据变化时才重新采样
-            if (!cachedSampledPixels || cachedSampledPixels.length === 0) {
-                // 随机采样1000个点以提高性能
-                const sampleSize = Math.min(1000, currentPixels.length);
-                cachedSampledPixels = [];
-                for (let i = 0; i < sampleSize; i++) {
-                    const index = Math.floor(Math.random() * currentPixels.length);
-                    cachedSampledPixels.push(currentPixels[index]);
-                }
-            }
-            
-            const data = cachedSampledPixels.map(pixel => {
-                return [pixel[0], pixel[1], pixel[2]];
-            });
-            
-            scatterChart.setOption({
-                title: {
-                    text: '颜色分布散点图 (R-G通道)',
-                    left: 'center'
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: function(params) {
-                        const r = params.value[0];
-                        const g = params.value[1];
-                        const b = params.value[2];
-                        const hex = rgbToHex(r, g, b);
-                        return `${hex}<br/>R: ${r}<br/>G: ${g}<br/>B: ${b}`;
-                    }
-                },
-                xAxis: {
-                    type: 'value',
-                    name: 'R',
-                    min: 0,
-                    max: 255
-                },
-                yAxis: {
-                    type: 'value',
-                    name: 'G',
-                    min: 0,
-                    max: 255
-                },
-                series: [{
-                    name: '像素',
-                    type: 'scatter',
-                    data: data.map(item => ({
-                        value: [item[0], item[1], item[2]],
-                        itemStyle: {
-                            color: rgbToHex(item[0], item[1], item[2])
-                        }
-                    })),
-                    symbolSize: 5
-                }]
-            });
-        }
-        
-        // 执行聚类
-        function performClustering() {
-            if (currentPixels.length === 0) return;
-            
-            loading.classList.add('show');
-            
-            // 使用setTimeout避免UI阻塞
-            setTimeout(() => {
-                currentK = parseInt(kValue.textContent);
-                currentColorSpace = document.querySelector('input[name="colorSpace"]:checked').value;
-                currentClusters = kmeans(currentPixels, currentK, currentColorSpace);
-                
-                updateCharts();
-                evaluateHarmony();
-                saveToHistory();
-                
-                loading.classList.remove('show');
-            }, 10);
-        }
-        
-        // 提取像素数据
-        function extractPixels() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // 缩放图片
-            let width = currentImage.width;
-            let height = currentImage.height;
-            const maxSize = 400;
-            
-            if (width > maxSize || height > maxSize) {
-                const ratio = Math.min(maxSize / width, maxSize / height);
-                width *= ratio;
-                height *= ratio;
-            }
-            
-            canvas.width = width;
-            canvas.height = height;
-            ctx.drawImage(currentImage, 0, 0, width, height);
-            
-            // 提取像素
-            const imageData = ctx.getImageData(0, 0, width, height);
-            const data = imageData.data;
-            currentPixels = [];
-            
-            // 重置缓存的采样点，因为像素数据已变化
-            cachedSampledPixels = null;
-            
-            for (let i = 0; i < data.length; i += 4) {
-                const r = data[i];
-                const g = data[i + 1];
-                const b = data[i + 2];
-                const a = data[i + 3];
-                
-                if (a > 0) {
-                    currentPixels.push([r, g, b]);
-                }
-            }
-            
-            // 开始聚类
-            performClustering();
-        }
-        
-        // 防抖函数
-        function debounce(func, wait) {
-            let timeout;
-            return function() {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(this, arguments), wait);
-            };
-        }
-        
-        // 初始化交互控件
-        function initControls() {
-            // K值滑块
-            kSlider.addEventListener('input', (e) => {
-                kValue.textContent = e.target.value;
-                debouncedClustering();
-            });
-            
-            // 颜色空间切换
-            document.querySelectorAll('input[name="colorSpace"]').forEach(radio => {
-                radio.addEventListener('change', debouncedClustering);
-            });
-            
-            // 图表类型切换
-            document.querySelectorAll('input[name="chartType"]').forEach(radio => {
-                radio.addEventListener('change', () => {
-                    if (currentClusters.length > 0) {
-                        updateCharts();
-                    }
-                });
-            });
-            
-            // 导出按钮
-            exportBtn.addEventListener('click', exportResults);
-        }
-        
-        // 评估颜色和谐度
-        function evaluateHarmony() {
-            if (currentClusters.length === 0) return;
-            
-            const colors = currentClusters.map(cluster => 
-                rgbToHex(cluster.color[0], cluster.color[1], cluster.color[2])
-            );
-            
-            const apiKey = apiKeyInput.value.trim();
-            
-            if (apiKey) {
-                // 调用真实API
-                callAIAPI(colors, apiKey);
-            } else {
-                // 使用模拟评估
-                simulateHarmonyEvaluation(colors);
-            }
-        }
-        
-        // 调用AI API
-        async function callAIAPI(colors, apiKey) {
-            try {
-                const response = await fetch('https://api.openai-proxy.org/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: 'gpt-3.5-turbo',
-                        messages: [
-                            {
-                                role: 'system',
-                                content: '你是一个色彩搭配专家。请判断给定的颜色组合是否和谐，并以JSON格式返回：{"score": 0-10的整数, "comment": "简短的中文评价"}。只输出JSON。'
-                            },
-                            {
-                                role: 'user',
-                                content: `颜色列表：[ "${colors.join('", "')}" ]`
-                            }
-                        ],
-                        temperature: 0.2
-                    })
-                });
-                
-                if (!response.ok) {
-                    // 显示API key不可用的弹窗提醒
-                    alert('API Key 不可用或已过期，请检查您的API Key是否正确。\n\n系统将自动切换到模拟评估模式。');
-                    throw new Error('API请求失败');
-                }
-                
-                const data = await response.json();
-                const result = JSON.parse(data.choices[0].message.content);
-                displayHarmonyResult(result.score, result.comment, false);
-            } catch (error) {
-                console.error('API调用失败:', error);
-                // 失败时使用模拟结果
-                simulateHarmonyEvaluation(colors);
-            }
-        }
-        
-        // 模拟和谐度评估
-        function simulateHarmonyEvaluation(colors) {
-            // 简单的模拟逻辑：随机生成评分和评价
-            const score = Math.floor(Math.random() * 5) + 5; // 5-9分
-            let comment;
-            
-            if (score >= 8) {
-                comment = '这些颜色搭配非常协调，具有现代感';
-            } else if (score >= 6) {
-                comment = '颜色搭配较为和谐，整体效果不错';
-            } else {
-                comment = '颜色搭配略显杂乱，建议调整色彩比例';
-            }
-            
-            displayHarmonyResult(score, comment, true);
-        }
-        
-        // 显示和谐度评估结果
-        function displayHarmonyResult(score, comment, isSimulated) {
-            harmonyScore.innerHTML = `和谐度评分: ${score}/10${isSimulated ? ' (模拟模式)' : ''}`;
-            harmonyComment.innerHTML = comment;
-        }
-        
-        // 导出结果
-        function exportResults() {
-            if (currentClusters.length === 0) return;
-            
-            const exportData = {
-                timestamp: new Date().toISOString(),
-                k: currentK,
-                colorSpace: currentColorSpace,
-                clusters: currentClusters.map(cluster => ({
-                    color: cluster.color,
-                    hex: rgbToHex(cluster.color[0], cluster.color[1], cluster.color[2]),
-                    name: getColorName(cluster.color[0], cluster.color[1], cluster.color[2]),
-                    count: cluster.count,
-                    percentage: cluster.percentage
-                })),
-                harmony: {
-                    score: harmonyScore.textContent,
-                    comment: harmonyComment.textContent
-                }
-            };
-            
-            // 导出为JSON
-            const jsonContent = JSON.stringify(exportData, null, 2);
-            const jsonBlob = new Blob([jsonContent], { type: 'application/json' });
-            const jsonUrl = URL.createObjectURL(jsonBlob);
-            
-            const jsonLink = document.createElement('a');
-            jsonLink.href = jsonUrl;
-            jsonLink.download = `color-analysis-${Date.now()}.json`;
-            jsonLink.click();
-            
-            // 导出为CSV
-            const csvContent = generateCSV(exportData);
-            const csvBlob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const csvUrl = URL.createObjectURL(csvBlob);
-            
-            const csvLink = document.createElement('a');
-            csvLink.href = csvUrl;
-            csvLink.download = `color-analysis-${Date.now()}.csv`;
-            csvLink.click();
-        }
-        
-        // 生成CSV内容
-        function generateCSV(data) {
-            // 添加UTF-8 BOM以解决中文乱码问题
-            let csv = '\ufeff颜色,十六进制,名称,像素数,占比\n';
-            data.clusters.forEach(cluster => {
-                csv += `${cluster.color.join(',')},${cluster.hex},${cluster.name},${cluster.count},${cluster.percentage.toFixed(2)}%\n`;
-            });
-            return csv;
-        }
-        
-        // 保存到历史记录
-        function saveToHistory() {
-            if (!currentImage || currentClusters.length === 0) return;
-            
-            // 创建缩略图
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 100;
-            canvas.height = 100;
-            ctx.drawImage(currentImage, 0, 0, 100, 100);
-            const thumbnail = canvas.toDataURL('image/jpeg');
-            
-            const historyItem = {
-                id: Date.now(),
-                thumbnail: thumbnail,
-                k: currentK,
-                colorSpace: currentColorSpace,
-                clusters: currentClusters,
-                timestamp: new Date().toISOString()
-            };
-            
-            // 添加到历史记录，最多保存3条
-            history.unshift(historyItem);
-            if (history.length > 3) {
-                history = history.slice(0, 3);
-            }
-            
-            // 更新历史记录UI
-            updateHistoryUI();
-        }
-        
-        // 更新历史记录UI
-        function updateHistoryUI() {
-            historyItems.innerHTML = '';
-            
-            history.forEach(item => {
-                const historyItem = document.createElement('div');
-                historyItem.className = 'history-item';
-                historyItem.innerHTML = `
-                    <img src="${item.thumbnail}" alt="历史图片">
-                    <div class="info">
-                        <div>K: ${item.k}</div>
-                        <div>${item.colorSpace.toUpperCase()}</div>
-                        <div>${new Date(item.timestamp).toLocaleString()}</div>
-                    </div>
-                `;
-                
-                historyItem.addEventListener('click', () => {
-                    // 加载历史记录
-                    currentK = item.k;
-                    currentColorSpace = item.colorSpace;
-                    currentClusters = item.clusters;
-                    
-                    // 恢复图片
-                    const img = new Image();
-                    img.onload = () => {
-                        currentImage = img;
-                    };
-                    img.src = item.thumbnail;
-                    
-                    // 更新UI
-                    kSlider.value = item.k;
-                    kValue.textContent = item.k;
-                    document.querySelector(`input[name="colorSpace"][value="${item.colorSpace}"]`).checked = true;
-                    
-                    // 更新图表
-                    updateCharts();
-                    evaluateHarmony();
-                });
-                
-                historyItems.appendChild(historyItem);
-            });
-        }
-        
-        // 防抖处理的聚类函数
-        const debouncedClustering = debounce(performClustering, 500);
-        
-        // 初始化函数
-        function init() {
-            initCharts();
-            initUpload();
-            initControls();
-        }
-        
-        // 页面加载完成后初始化
-        window.addEventListener('load', init);
-    </script>
 </body>
 </html>
